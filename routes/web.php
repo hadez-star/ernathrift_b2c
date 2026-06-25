@@ -459,6 +459,33 @@ Route::get('/checkout/success/{id}', function ($id) {
     return view('checkout-success', ['order' => $order, 'title' => 'Pesanan Berhasil']);
 });
 
+// ---- MIDTRANS: Update status setelah bayar berhasil (dipanggil dari JS onSuccess) ----
+Route::post('/checkout/payment-success/{id}', function (Request $request, $id) {
+    if (!Auth::check()) return response()->json(['message' => 'Unauthorized'], 401);
+
+    $order = Order::where('user_id', Auth::id())->findOrFail($id);
+
+    // Hanya update jika masih Menunggu Pembayaran
+    if ($order->status === 'Menunggu Pembayaran') {
+        $order->update([
+            'status'            => 'Dikemas',
+            'metode_pembayaran' => $request->payment_type ?? 'Midtrans',
+        ]);
+
+        // Kirim notifikasi ke user
+        Notification::kirim($order->user_id, [
+            'type'    => 'order',
+            'title'   => 'Pembayaran Diterima',
+            'message' => "Pembayaran untuk pesanan {$order->invoice} berhasil. Pesanan sedang dikemas.",
+            'url'     => url('/pesanan/lacak/' . $order->id),
+            'icon'    => 'fa-check-circle',
+            'color'   => '#2ECC71',
+        ]);
+    }
+
+    return response()->json(['success' => true, 'status' => $order->status]);
+});
+
 // ---- MIDTRANS: Buat Snap Token via AJAX ----
 Route::post('/checkout/midtrans-token', function (Request $request) {
     if (!Auth::check()) {

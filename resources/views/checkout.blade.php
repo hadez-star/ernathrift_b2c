@@ -454,7 +454,19 @@
                         // Buka popup Midtrans Snap
                         snap.pay(data.snap_token, {
                             onSuccess: function(result) {
-                                window.location.href = "{{ url('/checkout/success') }}/" + data.order_id;
+                                // Langsung update status ke Dikemas via AJAX
+                                fetch("{{ url('/checkout/payment-success') }}/" + data.order_id, {
+                                    method: 'POST',
+                                    credentials: 'same-origin',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ payment_type: result.payment_type })
+                                }).finally(() => {
+                                    window.location.href = "{{ url('/checkout/success') }}/" + data.order_id;
+                                });
                             },
                             onPending: function(result) {
                                 window.location.href = "{{ url('/checkout/success') }}/" + data.order_id;
