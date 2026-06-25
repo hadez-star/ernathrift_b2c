@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class FlashSale extends Model
+{
+    use HasFactory;
+
+    // Mengizinkan pengisian data end_time dan is_active secara massal
+    protected $guarded = [];
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'is_active' => 'boolean'
+    ];
+
+    public function items()
+    {
+        return $this->hasMany(FlashSaleItem::class);
+    }
+}

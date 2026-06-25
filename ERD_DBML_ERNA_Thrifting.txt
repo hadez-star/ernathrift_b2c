@@ -1,0 +1,174 @@
+Table tb_user {
+  id bigint [pk, increment]
+  nama varchar(255)
+  email varchar(255)
+  password varchar(255)
+  role varchar(50)
+  foto varchar(255)
+  alamat text
+  no_rumah varchar(50)
+  saldo decimal(15,2)
+  vip_paket varchar(50)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_kategori {
+  id bigint [pk, increment]
+  name varchar(255)
+  slug varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_produk {
+  id bigint [pk, increment]
+  id_kategori bigint [ref: > tb_kategori.id]
+  nama_produk varchar(255)
+  harga decimal(15,2)
+  stok int
+  deskripsi text
+  gambar varchar(255)
+  status varchar(50)
+  is_featured boolean
+  deleted_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_varian_produk {
+  id bigint [pk, increment]
+  id_produk bigint [ref: > tb_produk.id]
+  warna varchar(100)
+  ukuran varchar(100)
+  stok int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_gambar_produk {
+  id bigint [pk, increment]
+  id_produk bigint [ref: > tb_produk.id]
+  image_path varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_keranjang {
+  id bigint [pk, increment]
+  id_user bigint [ref: > tb_user.id]
+  id_produk bigint [ref: > tb_produk.id]
+  product_variant_id bigint [ref: > tb_varian_produk.id]
+  jumlah int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_pesanan {
+  id bigint [pk, increment]
+  id_user bigint [ref: > tb_user.id]
+  invoice varchar(100)
+  alamat_pengiriman text
+  total_harga decimal(15,2)
+  diskon decimal(15,2)
+  ongkir decimal(15,2)
+  total_bayar decimal(15,2)
+  status varchar(50)
+  no_resi varchar(100)
+  catatan text
+  alasan_retur text
+  status_retur varchar(50)
+  bukti_retur varchar(255)
+  bukti_pembayaran varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_item_pesanan {
+  id bigint [pk, increment]
+  id_pesanan bigint [ref: > tb_pesanan.id]
+  id_produk bigint [ref: > tb_produk.id]
+  product_variant_id bigint [ref: > tb_varian_produk.id]
+  jumlah int
+  harga_satuan decimal(15,2)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_ulasan {
+  id bigint [pk, increment]
+  id_user bigint [ref: > tb_user.id]
+  id_produk bigint [ref: > tb_produk.id]
+  rating int
+  komentar text
+  foto varchar(255)
+  balasan_admin text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_wishlist {
+  id bigint [pk, increment]
+  id_user bigint [ref: > tb_user.id]
+  id_produk bigint [ref: > tb_produk.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_voucher {
+  id bigint [pk, increment]
+  code varchar(100)
+  type varchar(50)
+  reward_amount decimal(15,2)
+  min_spend decimal(15,2)
+  limit int
+  expiry_date varchar(100)
+  valid_until varchar(100)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_flash_sale {
+  id bigint [pk, increment]
+  nama_kampanye varchar(255)
+  start_time datetime
+  end_time datetime
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_flash_sale_item {
+  id bigint [pk, increment]
+  id_flash_sale bigint [ref: > tb_flash_sale.id]
+  id_produk bigint [ref: > tb_produk.id]
+  harga_diskon decimal(15,2)
+  kuota_stok int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_notifikasi {
+  id bigint [pk, increment]
+  id_user bigint [ref: > tb_user.id]
+  type varchar(50)
+  title varchar(255)
+  message text
+  url varchar(255)
+  icon varchar(100)
+  color varchar(50)
+  is_read boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tb_pengaturan_web {
+  id bigint [pk, increment]
+  nama_toko varchar(255)
+  email varchar(255)
+  whatsapp varchar(50)
+  alamat text
+  deskripsi text
+  created_at timestamp
+  updated_at timestamp
+}
