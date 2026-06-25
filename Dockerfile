@@ -34,7 +34,7 @@ RUN cp -n .env.example .env || true
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install Node dependencies and build assets
-RUN npm ci && npm run build
+RUN npm install && npm run build
 
 # Generate app key
 RUN php artisan key:generate --force
