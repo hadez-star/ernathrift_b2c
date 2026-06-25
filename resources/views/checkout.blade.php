@@ -443,7 +443,8 @@
                 const formData = new FormData(formAsli);
                 fetch("{{ url('/checkout/midtrans-token') }}", {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    credentials: 'same-origin',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
                     body: formData
                 })
                 .then(res => res.json())
