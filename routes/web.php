@@ -931,7 +931,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ]); 
     });
     Route::post('/produk/simpan', function(Request $request) {
-        $data = $request->all(); $data['status'] = 'Tersedia'; $data['is_featured'] = $request->has('is_featured') ? 1 : 0; 
+        $data = $request->except(['gambar_tambahan', 'variant_warna', 'variant_ukuran', 'variant_stok', '_token']);
+        $data['status'] = 'Tersedia';
+        $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar'); $nama_file = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/produk'), $nama_file); $data['gambar'] = 'uploads/produk/' . $nama_file;
