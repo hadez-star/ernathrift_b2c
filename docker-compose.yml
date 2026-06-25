@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: thrift-store
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./storage:/var/www/storage
+      - ./public/uploads:/var/www/public/uploads
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:s0VvnEcYLAtoi99w2dO3da1XgpBkna6ZQodKnvxFHCE=
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=thrift_store
+      - DB_USERNAME=thrift
+      - DB_PASSWORD=thrift123
+      - SESSION_DRIVER=file
+      - CACHE_STORE=file
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: thrift-store-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: thrift_store
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: thrift
+      MYSQL_PASSWORD: thrift123
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  db_data:
