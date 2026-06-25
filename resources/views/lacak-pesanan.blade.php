@@ -301,7 +301,7 @@
                     <i class="fas fa-exclamation-circle"></i> Selesaikan Pembayaran
                 </h4>
                 <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-                    Pesanan Anda sebesar <strong style="color: var(--gold); font-size: 18px;">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</strong> belum dibayar.<br>
+                    Pesanan Anda sebesar <strong style="color: var(--gold); font-size: 18px;">Rp {{ number_format($order->total_bayar, 0, ',', '.') }}</strong> belum dibayar.<br>
                     Segera selesaikan pembayaran sebelum pesanan otomatis dibatalkan.
                 </p>
 
