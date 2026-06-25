@@ -54,6 +54,10 @@ RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage \
     && chmod -R 775 /var/www/bootstrap/cache
 
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"]
+CMD ["/start.sh"]
