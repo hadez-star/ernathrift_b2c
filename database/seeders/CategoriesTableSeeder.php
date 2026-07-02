@@ -51,6 +51,14 @@ class CategoriesTableSeeder extends Seeder
                 'created_at' => '2026-04-22 01:55:14',
                 'updated_at' => '2026-04-22 01:55:14',
             ),
+            4 => 
+            array (
+                'id' => 7,
+                'name' => 'Koleksi Eksklusif',
+                'slug' => 'koleksi-eksklusif',
+                'created_at' => '2026-04-22 01:55:14',
+                'updated_at' => '2026-04-22 01:55:14',
+            ),
         ));
         
         
