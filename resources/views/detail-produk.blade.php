@@ -114,7 +114,7 @@
         .product-gallery {
             flex: 1;
             position: relative;
-            background: var(--border-color);
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -273,7 +273,7 @@
         <div class="detail-card">
             
             <div class="product-gallery" style="flex-direction: column;">
-                <div style="position: relative; width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <div style="position: relative; width: 100%; flex: 1; min-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #fff;">
                     <button class="btn-share-img" onclick="shareProduct('{{ url()->current() }}', '{{ addslashes($product->nama_produk ?? 'Koleksi') }}')" title="Bagikan Produk ini">
                         <i class="fas fa-share-alt"></i>
                     </button>
