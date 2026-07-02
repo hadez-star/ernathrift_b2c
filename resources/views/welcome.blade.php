@@ -460,6 +460,7 @@
             <div class="product-grid">
                 @foreach($flashSaleProducts as $item)
                 @php $p = $item->product; @endphp
+                @if($p)
                 <div class="product-card" data-aos="fade-up">
                     <div class="product-img-wrap">
                         <a href="{{ url('/produk/detail/'.$p->id) }}">
@@ -497,6 +498,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 @endforeach
             </div>
             
@@ -600,7 +602,7 @@
                 </div>
                 <p class="testimonial-text">"{{ $t->komentar }}"</p>
                 <span class="testimonial-user">{{ $t->user->name }}</span>
-                <span class="testimonial-product">Membeli {{ $t->product->nama_produk }}</span>
+                <span class="testimonial-product">Membeli {{ $t->product?->nama_produk ?? 'Produk Dihapus' }}</span>
             </div>
             @endforeach
         </div>
