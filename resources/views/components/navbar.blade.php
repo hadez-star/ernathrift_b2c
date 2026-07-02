@@ -36,7 +36,7 @@
         position: absolute; left: 50%; transform: translateX(-50%); text-align: center;
     }
 
-    .search-navbar-wrapper { flex: 2; display: flex; justify-content: center; }
+    .search-navbar-wrapper { flex: 1; display: flex; justify-content: flex-start; }
     
     .search-navbar { 
         display: flex; align-items: center; border-radius: 30px; 
