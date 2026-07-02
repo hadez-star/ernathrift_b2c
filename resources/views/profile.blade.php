@@ -72,7 +72,7 @@
 
         .profile-cover {
             height: 120px;
-            background: linear-gradient(rgba(15, 15, 15, 0.5), rgba(15, 15, 15, 0.8)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop') center/cover;
+            background: linear-gradient(rgba(15, 15, 15, 0.5), rgba(15, 15, 15, 0.8)), url('{{ asset("images/hero-bg.jpg") }}') center/cover;
             position: relative;
         }
 

@@ -41,7 +41,7 @@
         .brand-side {
             flex: 1.2;
             background: linear-gradient(rgba(15, 15, 15, 0.7), rgba(15, 15, 15, 0.95)), 
-                        url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+                        url('{{ asset("images/hero-bg.jpg") }}') center/cover no-repeat;
             display: flex; flex-direction: column; justify-content: center; padding: 80px; position: relative;
         }
         .brand-side::before {

@@ -130,10 +130,10 @@
         @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
 
         body:not(.light-mode) .hero::before {
-            background: linear-gradient(rgba(15, 15, 15, 0.4), rgba(15, 15, 15, 0.8)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop');
+            background: linear-gradient(rgba(15, 15, 15, 0.4), rgba(15, 15, 15, 0.8)), url('{{ asset("images/hero-bg.jpg") }}');
         }
         body.light-mode .hero::before {
-            background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop');
+            background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4)), url('{{ asset("images/hero-bg.jpg") }}');
         }
 
         /* Hapus background lama di .hero */
