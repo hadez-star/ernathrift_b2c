@@ -73,14 +73,25 @@ php artisan migrate --force
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
 
-# Fix persistent uploads
+# Recreate storage skeleton if mounted as an empty volume
+mkdir -p /var/www/storage/framework/cache/data
+mkdir -p /var/www/storage/framework/sessions
+mkdir -p /var/www/storage/framework/testing
+mkdir -p /var/www/storage/framework/views
+mkdir -p /var/www/storage/logs
 mkdir -p /var/www/storage/app/public/uploads
+
+# Fix persistent uploads
 if [ -d "/var/www/public/uploads" ] && [ ! -L "/var/www/public/uploads" ]; then
     echo "Migrating public/uploads to persistent storage..."
     cp -r /var/www/public/uploads/* /var/www/storage/app/public/uploads/ 2>/dev/null || true
-    rm -rf /var/www/public/uploads
+    # Use || true to prevent crashing if public/uploads is a busy mount point
+    rm -rf /var/www/public/uploads || true
 fi
-ln -sf /var/www/storage/app/public/uploads /var/www/public/uploads
+# Recreate symlink if public/uploads is not a directory (or was just deleted)
+if [ ! -d "/var/www/public/uploads" ]; then
+    ln -sf /var/www/storage/app/public/uploads /var/www/public/uploads
+fi
 
 # Fix permissions
 chmod -R 775 storage bootstrap/cache public/uploads 2>/dev/null || true
