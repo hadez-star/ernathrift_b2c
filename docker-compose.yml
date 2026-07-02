@@ -8,8 +8,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./storage:/var/www/storage
-      - ./public/uploads:/var/www/public/uploads
+      - storage_data:/var/www/storage
+      - uploads_data:/var/www/public/uploads
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
@@ -46,3 +46,5 @@ services:
 
 volumes:
   db_data:
+  storage_data:
+  uploads_data:
