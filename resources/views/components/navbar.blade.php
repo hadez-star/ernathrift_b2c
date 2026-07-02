@@ -32,7 +32,8 @@
         font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; 
         color: var(--gold); letter-spacing: 2px; text-decoration: none; 
         text-transform: uppercase; transition: 0.3s;
-        z-index: 10; flex: 1;
+        z-index: 10;
+        position: absolute; left: 50%; transform: translateX(-50%); text-align: center;
     }
 
     .search-navbar-wrapper { flex: 2; display: flex; justify-content: center; }
@@ -186,7 +187,6 @@
                 <a href="{{ url('/katalog/celana-pria') }}" class="dropdown-item">Celana Pria</a>
                 <a href="{{ url('/katalog/baju-wanita') }}" class="dropdown-item">Baju Wanita</a>
                 <a href="{{ url('/katalog/celana-wanita') }}" class="dropdown-item">Celana Wanita</a>
-                <a href="{{ url('/katalog/jaket') }}" class="dropdown-item">Jaket</a>
                 <a href="{{ url('/katalog/hoodie') }}" class="dropdown-item">Hoodie</a>
                 <div style="border-top: 1px solid var(--border-color); margin: 5px 0;"></div>
                 <a href="{{ url('/flash-sale') }}" class="dropdown-item" style="color: var(--red-accent);"><i class="fas fa-bolt" style="margin-right: 5px;"></i> Flash Sale</a>
