@@ -275,16 +275,17 @@
 
         <div class="drawer-footer">
             @auth
-                <div class="profile-mini">
-                    <div class="profile-mini-img">
-                        <img src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=D4AF37&color=fff' }}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                <a href="{{ url('/profile') }}" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="profile-mini">
+                        <div class="profile-mini-img">
+                            <img src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=D4AF37&color=fff' }}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                        </div>
+                        <div class="profile-mini-info">
+                            <h4>{{ Auth::user()->name }}</h4>
+                            <p>{{ Auth::user()->email }}</p>
+                        </div>
                     </div>
-                    <div class="profile-mini-info">
-                        <h4>{{ Auth::user()->name }}</h4>
-                        <p>{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-                <a href="{{ url('/profile') }}" class="mobile-nav-link" style="margin-bottom: 10px;"><i class="fas fa-user-circle"></i> Profil Saya</a>
+                </a>
                 <a href="{{ url('/logout') }}" class="mobile-nav-link" style="color: var(--red-accent);"><i class="fas fa-power-off"></i> Keluar</a>
             @else
             @endauth

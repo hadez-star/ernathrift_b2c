@@ -180,7 +180,7 @@
         .product-desc-title { font-size: 12px; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 10px; display: block; transition: 0.4s ease; }
 
         /* --- TOMBOL AKSI --- */
-        .action-group { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .action-group { display: flex; gap: 15px; margin-bottom: 25px; }
         
         .btn-cart, .btn-wish {
             width: 58px; height: 58px; border-radius: 14px;
@@ -250,7 +250,7 @@
         }
         
         @media (max-width: 480px) {
-            .btn-buy-now { flex: 100%; }
+            .btn-buy-now { flex: 1; }
         }
     </style>
 </head>
@@ -347,20 +347,22 @@
                     {!! nl2br(e($product->deskripsi ?? 'Tidak ada deskripsi khusus untuk produk ini. Pakaian thrift berkualitas premium yang telah dikurasi secara ketat.')) !!}
                 </div>
 
-                <div class="action-group">
-                    @if(isset($product) && $product->status == 'Tersedia')
-                        <button class="btn-cart" onclick="addToCartWithVariant(event, {{ $product->id ?? 0 }})" title="Masukkan Keranjang">
-                            <i class="fas fa-shopping-cart"></i>
-                        </button>
-                        
-                        <a href="javascript:void(0)" onclick="buyNowWithVariant({{ $product->id ?? 0 }})" class="btn-buy-now">
-                            <i class="fas fa-bolt"></i> Beli Sekarang
-                        </a>
-                    @else
-                        <button class="btn-buy-now" style="background: var(--border-color); color: var(--text-muted); cursor: not-allowed;" disabled>
-                            Produk Habis
-                        </button>
-                    @endif
+                <div class="action-group" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; gap: 15px; width: 100%;">
+                        @if(isset($product) && $product->status == 'Tersedia')
+                            <button class="btn-cart" onclick="addToCartWithVariant(event, {{ $product->id ?? 0 }})" title="Masukkan Keranjang">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                            
+                            <a href="javascript:void(0)" onclick="buyNowWithVariant({{ $product->id ?? 0 }})" class="btn-buy-now">
+                                <i class="fas fa-bolt"></i> Beli Sekarang
+                            </a>
+                        @else
+                            <button class="btn-buy-now" style="background: var(--border-color); color: var(--text-muted); cursor: not-allowed;" disabled>
+                                Produk Habis
+                            </button>
+                        @endif
+                    </div>
 
                     @php
                         $isWishlisted = false;
@@ -375,12 +377,13 @@
                         $wa_message = urlencode("Halo Admin {$nama_toko}, saya tertarik dengan produk *" . ($product->nama_produk ?? 'ini') . "* (" . url()->current() . "). Apakah produk ini masih tersedia?");
                     @endphp
 
-                    <div style="width: 100%; display: flex; gap: 15px; margin-top: 10px;">
+                    <div style="display: flex; gap: 15px; width: 100%;">
                         <button class="btn-wish {{ $isWishlisted ? 'active' : '' }}" onclick="toggleWishlist(event, {{ $product->id ?? 0 }})" title="Tambah ke Wishlist">
                             <i class="{{ $isWishlisted ? 'fas' : 'far' }} fa-heart" id="wishlist-icon-{{ $product->id ?? 0 }}"></i>
                         </button>
-                        <a href="https://wa.me/{{ $wa_number }}?text={{ $wa_message }}" target="_blank" class="btn-buy-now" style="background: #25D366; color: white; flex: 1;">
-                            <i class="fab fa-whatsapp"></i> Tanya via WhatsApp
+                        
+                        <a href="https://wa.me/{{ $wa_number }}?text={{ $wa_message }}" target="_blank" class="btn-buy-now" style="background: #25D366; color: #fff; box-shadow: 0 10px 25px rgba(37,211,102,0.3); border: none;">
+                            <i class="fab fa-whatsapp"></i> Tanya via Whatsapp
                         </a>
                     </div>
                 </div>

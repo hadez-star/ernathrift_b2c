@@ -216,6 +216,10 @@
         @media (max-width: 800px) {
             .dashboard-layout { grid-template-columns: 1fr; }
             .profile-container { padding-top: 80px; }
+            .menu-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .action-card { flex-direction: column; text-align: center; padding: 20px 10px; gap: 10px; }
+            .action-icon { margin-bottom: 5px; }
+            .action-text p { font-size: 10px; }
             .ecommerce-toast {
                 margin-bottom: 25px !important;
                 border-radius: 50px !important;
