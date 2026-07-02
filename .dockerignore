@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/.git
+/.env
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/storage/*.key
