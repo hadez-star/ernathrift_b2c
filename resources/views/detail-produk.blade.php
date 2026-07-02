@@ -123,7 +123,7 @@
             border-right: 1px solid var(--border-color);
         }
         .product-gallery img {
-            width: 100%; height: 100%; object-fit: contain; background-color: #fff; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: contain; background-color: #fff; padding: 20px; box-sizing: border-box; position: absolute; top: 0; left: 0;
             transition: transform 0.5s ease;
         }
         .product-gallery:hover img { transform: scale(1.05); }
@@ -439,7 +439,7 @@
                 @foreach($relatedProducts as $rp)
                 <a href="{{ url('/produk/detail/'.$rp->id) }}" class="related-card" style="text-decoration: none; color: inherit; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: block; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;">
                     <div style="position: relative; overflow: hidden; height: 220px;">
-                        <img src="{{ asset($rp->gambar) }}" style="width: 100%; height: 100%; object-fit: contain; background-color: #fff; transition: 0.5s ease;">
+                        <img src="{{ asset($rp->gambar) }}" style="width: 100%; height: 100%; object-fit: contain; background-color: #fff; padding: 20px; box-sizing: border-box; transition: 0.5s ease;">
                         <div class="related-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; backdrop-filter: blur(2px);">
                             <span style="color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border: 1px solid white; padding: 8px 15px; border-radius: 30px;">Lihat Detail</span>
                         </div>
