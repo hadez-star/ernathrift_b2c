@@ -81,18 +81,6 @@ mkdir -p /var/www/storage/framework/views
 mkdir -p /var/www/storage/logs
 mkdir -p /var/www/storage/app/public/uploads
 
-# Fix persistent uploads
-if [ -d "/var/www/public/uploads" ] && [ ! -L "/var/www/public/uploads" ]; then
-    echo "Migrating public/uploads to persistent storage..."
-    cp -r /var/www/public/uploads/* /var/www/storage/app/public/uploads/ 2>/dev/null || true
-    # Use || true to prevent crashing if public/uploads is a busy mount point
-    rm -rf /var/www/public/uploads || true
-fi
-# Recreate symlink if public/uploads is not a directory (or was just deleted)
-if [ ! -d "/var/www/public/uploads" ]; then
-    ln -sf /var/www/storage/app/public/uploads /var/www/public/uploads
-fi
-
 # Fix permissions
 chmod -R 775 storage bootstrap/cache public/uploads 2>/dev/null || true
 
