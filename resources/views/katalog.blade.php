@@ -70,7 +70,7 @@
         body:not(.light-mode) .product-card:hover { transform: translateY(-10px); border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.1); }
         body.light-mode .product-card:hover { transform: translateY(-10px); border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.05), 0 0 20px rgba(212, 175, 55, 0.05); }
         .product-img-wrap { position: relative; width: 100%; padding-top: 125%; background: var(--border-color); overflow: hidden; }
-        .product-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(0.9); transition: transform 0.7s ease, filter 0.5s ease; }
+        .product-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background-color: #fff; object-position: center; filter: brightness(0.9); transition: transform 0.7s ease, filter 0.5s ease; }
         .product-card:hover .product-img-wrap img { filter: brightness(1.05); transform: scale(1.08); }
         .product-img-wrap i.main-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 60px; color: var(--text-muted); }
         .product-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px 10px 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; justify-content: center; align-items: center; gap: 10px; z-index: 2; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }

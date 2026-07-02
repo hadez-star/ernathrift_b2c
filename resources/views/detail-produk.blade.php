@@ -123,7 +123,7 @@
             border-right: 1px solid var(--border-color);
         }
         .product-gallery img {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: contain; background-color: #fff; position: absolute; top: 0; left: 0;
             transition: transform 0.5s ease;
         }
         .product-gallery:hover img { transform: scale(1.05); }
@@ -286,9 +286,9 @@
                 
                 @if(isset($product) && $product->images && $product->images->count() > 0)
                 <div style="display: flex; gap: 10px; padding: 20px; width: 100%; overflow-x: auto; background: var(--bg-surface); border-top: 1px solid var(--border-color);">
-                    <img src="{{ asset($product->gambar) }}" onclick="document.getElementById('mainImage').src=this.src" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--gold); transition: 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="{{ asset($product->gambar) }}" onclick="document.getElementById('mainImage').src=this.src" style="width: 70px; height: 70px; object-fit: contain; background-color: #fff; border-radius: 8px; cursor: pointer; border: 2px solid var(--gold); transition: 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     @foreach($product->images as $img)
-                        <img src="{{ asset($img->image_path) }}" onclick="document.getElementById('mainImage').src=this.src; document.querySelectorAll('.product-gallery img').forEach(i => i.style.borderColor='var(--border-color)'); this.style.borderColor='var(--gold)';" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); transition: 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="{{ asset($img->image_path) }}" onclick="document.getElementById('mainImage').src=this.src; document.querySelectorAll('.product-gallery img').forEach(i => i.style.borderColor='var(--border-color)'); this.style.borderColor='var(--gold)';" style="width: 70px; height: 70px; object-fit: contain; background-color: #fff; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); transition: 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     @endforeach
                 </div>
                 @endif
@@ -415,7 +415,7 @@
                 
                 @if($review->foto)
                     <div style="margin-top: 15px;">
-                        <img src="{{ asset($review->foto) }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 1px solid var(--border-color);" onclick="window.open(this.src)" title="Klik untuk memperbesar">
+                        <img src="{{ asset($review->foto) }}" style="width: 100px; height: 100px; object-fit: contain; background-color: #fff; border-radius: 12px; cursor: pointer; border: 1px solid var(--border-color);" onclick="window.open(this.src)" title="Klik untuk memperbesar">
                     </div>
                 @endif
                 
@@ -439,7 +439,7 @@
                 @foreach($relatedProducts as $rp)
                 <a href="{{ url('/produk/detail/'.$rp->id) }}" class="related-card" style="text-decoration: none; color: inherit; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: block; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;">
                     <div style="position: relative; overflow: hidden; height: 220px;">
-                        <img src="{{ asset($rp->gambar) }}" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease;">
+                        <img src="{{ asset($rp->gambar) }}" style="width: 100%; height: 100%; object-fit: contain; background-color: #fff; transition: 0.5s ease;">
                         <div class="related-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; backdrop-filter: blur(2px);">
                             <span style="color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border: 1px solid white; padding: 8px 15px; border-radius: 30px;">Lihat Detail</span>
                         </div>
