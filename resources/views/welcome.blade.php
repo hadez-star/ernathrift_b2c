@@ -133,7 +133,7 @@
             background: linear-gradient(rgba(15, 15, 15, 0.4), rgba(15, 15, 15, 0.8)), url('{{ asset("images/hero-bg.jpg") }}');
         }
         body.light-mode .hero::before {
-            background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3)), url('{{ asset("images/hero-bg.jpg") }}');
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('{{ asset("images/hero-bg.jpg") }}');
         }
 
         /* Hapus background lama di .hero */
@@ -141,16 +141,16 @@
 
         .hero-subtitle { font-size: 12px; letter-spacing: 6px; margin-bottom: 20px; text-transform: uppercase; color: var(--gold); font-weight: 600; }
         body:not(.light-mode) .hero-subtitle { text-shadow: 0 0 10px rgba(0,0,0,0.8); } /* Bayangan untuk mode gelap */
-        body.light-mode .hero-subtitle { text-shadow: 0 0 10px rgba(255,255,255,0.4); }
+        body.light-mode .hero-subtitle { text-shadow: 0 0 10px rgba(0,0,0,0.8); }
         
         /* Bayangan pada teks agar tetap terbaca meski background lebih terang/jelas */
         .hero-title { font-family: 'Playfair Display', serif; font-size: 70px; margin-bottom: 40px; line-height: 1.1; font-weight: 700; letter-spacing: -1px; }
         body:not(.light-mode) .hero-title { text-shadow: 0 5px 15px rgba(0,0,0,0.7); } /* Bayangan hitam untuk mode gelap */
-        body.light-mode .hero-title { text-shadow: 0 0 5px rgba(255,255,255,0.8), 0 0 1px rgba(255,255,255,0.9); }
+        body.light-mode .hero-title { color: #ffffff; text-shadow: 0 5px 15px rgba(0,0,0,0.7); }
 
         .hero-desc { max-width: 600px; margin-bottom: 40px; font-size: 14px; line-height: 1.8; transition: color 0.4s ease; font-weight: 600;}
         body:not(.light-mode) .hero-desc { color: rgba(255,255,255,0.9); text-shadow: 0 2px 10px rgba(0,0,0,0.8); } /* Bayangan hitam untuk mode gelap */
-        body.light-mode .hero-desc { color: #111111; text-shadow: 0 0 4px rgba(255,255,255,0.9); }
+        body.light-mode .hero-desc { color: rgba(255,255,255,0.9); text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
         .btn-jelajahi { padding: 15px 40px; background: var(--gold); border: 1px solid var(--gold); color: #111; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-decoration: none; transition: 0.4s; border-radius: 4px; text-transform: uppercase; }
         .btn-jelajahi:hover { background: transparent; color: var(--gold); }
