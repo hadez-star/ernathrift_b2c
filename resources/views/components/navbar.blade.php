@@ -72,6 +72,15 @@
     .cart-wrapper { position: relative; cursor: pointer; text-decoration: none; font-size: 16px;}
     .cart-badge { position: absolute; top: -6px; right: -12px; background: var(--gold); color: #fff; font-size: 9px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700; }
 
+    /* --- TEXT COLOR WHEN TRANSPARENT (HERO) --- */
+    .navbar:not(.scrolled):not(.solid) .nav-item,
+    .navbar:not(.scrolled):not(.solid) .notif-bell-btn { color: #ffffff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .navbar:not(.scrolled):not(.solid) .search-navbar input { color: #ffffff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .navbar:not(.scrolled):not(.solid) .search-navbar input::placeholder { color: rgba(255,255,255,0.7) !important; }
+    .navbar:not(.scrolled):not(.solid) .search-navbar button { color: #ffffff !important; }
+    .navbar:not(.scrolled):not(.solid) .nav-item:hover,
+    .navbar:not(.scrolled):not(.solid) .notif-bell-btn:hover { color: var(--gold) !important; }
+
     /* MOBILE DRAWER STYLES */
     .mobile-overlay { 
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
