@@ -47,6 +47,10 @@ RUN php artisan key:generate --force
 # Build assets
 RUN npm run build
 
+# Add PHP config for larger uploads
+RUN echo "upload_max_filesize = 50M" > /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Re-run composer scripts setelah semua file ada
 RUN composer dump-autoload --optimize
 

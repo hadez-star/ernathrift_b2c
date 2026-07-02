@@ -73,8 +73,17 @@ php artisan migrate --force
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
 
+# Fix persistent uploads
+mkdir -p /var/www/storage/app/public/uploads
+if [ -d "/var/www/public/uploads" ] && [ ! -L "/var/www/public/uploads" ]; then
+    echo "Migrating public/uploads to persistent storage..."
+    cp -r /var/www/public/uploads/* /var/www/storage/app/public/uploads/ 2>/dev/null || true
+    rm -rf /var/www/public/uploads
+fi
+ln -sf /var/www/storage/app/public/uploads /var/www/public/uploads
+
 # Fix permissions
-chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage bootstrap/cache public/uploads 2>/dev/null || true
 
 echo "=== Server starting on port 8000 ==="
 exec php artisan serve --host=0.0.0.0 --port=8000
