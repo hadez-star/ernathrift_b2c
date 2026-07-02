@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'     => \App\Http\Middleware\AdminMiddleware::class,
             'auth.user' => \App\Http\Middleware\AuthUser::class,
         ]);
+        // Percayai reverse proxy Coolify
+        $middleware->trustProxies(at: '*');
 
         // Kecualikan webhook Midtrans dari CSRF verification
         $middleware->validateCsrfTokens(except: [
