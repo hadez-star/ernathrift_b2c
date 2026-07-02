@@ -72,7 +72,7 @@
                 <label>Ganti Foto Utama</label>
                 @if($product->gambar)
                     <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
-                        <img src="{{ url('/'.$product->gambar) }}" alt="Foto Lama" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <img src="{{ asset($product->gambar) }}" alt="Foto Lama" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                         <span style="font-size: 11px; color: #888;">Foto saat ini</span>
                     </div>
                 @endif
@@ -85,7 +85,7 @@
                 @if($product->images && $product->images->count() > 0)
                     <div style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
                         @foreach($product->images as $img)
-                            <img src="{{ url('/'.$img->image_path) }}" alt="Foto Tambahan" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+                            <img src="{{ asset($img->image_path) }}" alt="Foto Tambahan" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
                         @endforeach
                     </div>
                 @endif

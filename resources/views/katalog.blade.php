@@ -309,7 +309,7 @@
                         
                         <a href="{{ url('/produk/detail/'.$p->id) }}">
                             @if(isset($p->gambar) && $p->gambar != '')
-                                <img src="{{ url('/' . $p->gambar) }}" alt="{{ $p->nama_produk }}">
+                                <img src="{{ asset($p->gambar) }}" alt="{{ $p->nama_produk }}">
                             @else
                                 <i class="fas fa-tshirt main-icon"></i>
                             @endif
