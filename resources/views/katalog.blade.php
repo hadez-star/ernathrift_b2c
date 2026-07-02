@@ -289,6 +289,7 @@
         <a href="{{ url('/katalog/celana-pria') }}" class="filter-btn {{ (isset($nama_kategori) && $nama_kategori == 'Celana Pria') ? 'active' : '' }}">Celana Pria</a>
         <a href="{{ url('/katalog/baju-wanita') }}" class="filter-btn {{ (isset($nama_kategori) && $nama_kategori == 'Baju Wanita') ? 'active' : '' }}">Baju Wanita</a>
         <a href="{{ url('/katalog/celana-wanita') }}" class="filter-btn {{ (isset($nama_kategori) && $nama_kategori == 'Celana Wanita') ? 'active' : '' }}">Celana Wanita</a>
+        <a href="{{ url('/katalog/hoodie') }}" class="filter-btn {{ (isset($nama_kategori) && $nama_kategori == 'Hoodie') ? 'active' : '' }}">Hoodie</a>
     </div>
 
     <div class="sort-container">
