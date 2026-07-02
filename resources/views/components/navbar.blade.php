@@ -34,6 +34,12 @@
         text-transform: uppercase; transition: 0.3s;
         z-index: 10; flex: 1;
     }
+    
+    @media (min-width: 993px) {
+        .navbar-brand-centered {
+            position: absolute; left: 50%; transform: translateX(-50%); text-align: center; flex: none;
+        }
+    }
 
     .search-navbar-wrapper { flex: 2; display: flex; justify-content: center; }
     
@@ -166,7 +172,7 @@
         <a href="{{ url('/') }}" class="btn-back-nav"><i class="fas fa-arrow-left"></i> <span>Beranda</span></a>
     @endif
 
-    <a href="/" class="navbar-brand">{{ $nama_toko }}</a>
+    <a href="/" class="navbar-brand {{ !$showSearch ? 'navbar-brand-centered' : '' }}">{{ $nama_toko }}</a>
 
     @if($showSearch)
         <div class="search-navbar-wrapper">
