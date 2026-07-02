@@ -32,11 +32,10 @@
         font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; 
         color: var(--gold); letter-spacing: 2px; text-decoration: none; 
         text-transform: uppercase; transition: 0.3s;
-        z-index: 10;
-        position: absolute; left: 50%; transform: translateX(-50%); text-align: center;
+        z-index: 10; flex: 1;
     }
 
-    .search-navbar-wrapper { flex: 1; display: flex; justify-content: flex-start; }
+    .search-navbar-wrapper { flex: 2; display: flex; justify-content: center; }
     
     .search-navbar { 
         display: flex; align-items: center; border-radius: 30px; 
