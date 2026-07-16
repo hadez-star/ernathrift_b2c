@@ -1013,15 +1013,27 @@ Route::prefix('admin')->middleware('admin')->group(function () {
                 ->pluck('wishlists.user_id');
             $recipientIds = $recipientIds->merge($wishlistIds);
 
+            // 3. Fallback: kirim ke semua user kalau tidak ada match
+            if ($recipientIds->isEmpty()) {
+                $recipientIds = User::where('role', 'user')
+                    ->whereNotNull('email')
+                    ->pluck('id');
+                \Illuminate\Support\Facades\Log::info('ProductMail fallback: kirim ke semua ' . $recipientIds->count() . ' user');
+            }
+
             $recipients = User::whereIn('id', $recipientIds->unique())
+                ->where('role', 'user')
                 ->whereNotNull('email')
                 ->get();
+
+            \Illuminate\Support\Facades\Log::info('ProductMail: akan kirim ke ' . $recipients->count() . ' user untuk produk ' . $product->nama_produk);
 
             foreach ($recipients as $recipient) {
                 try {
                     Mail::to($recipient->email)->send(
                         new \App\Mail\ProductUpdateMail($recipient, $product)
                     );
+                    \Illuminate\Support\Facades\Log::info('ProductMail: berhasil kirim ke ' . $recipient->email);
                 } catch (\Exception $mailError) {
                     \Illuminate\Support\Facades\Log::warning('Email produk baru gagal ke ' . $recipient->email . ': ' . $mailError->getMessage());
                 }
