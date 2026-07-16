@@ -992,6 +992,44 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             }
         }
 
+        // Kirim notifikasi email ke user yang tertarik kategori ini
+        // (pernah wishlist ATAU pernah beli dari kategori yang sama)
+        try {
+            $recipientIds = collect();
+
+            // 1. User yang pernah beli dari kategori ini
+            $buyerIds = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->join('products as p', 'order_items.product_id', '=', 'p.id')
+                ->where('p.kategori', $product->kategori)
+                ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
+                ->pluck('orders.user_id');
+            $recipientIds = $recipientIds->merge($buyerIds);
+
+            // 2. User yang punya wishlist dari kategori ini
+            $wishlistIds = DB::table('wishlists')
+                ->join('products as p', 'wishlists.product_id', '=', 'p.id')
+                ->where('p.kategori', $product->kategori)
+                ->pluck('wishlists.user_id');
+            $recipientIds = $recipientIds->merge($wishlistIds);
+
+            $recipients = User::whereIn('id', $recipientIds->unique())
+                ->whereNotNull('email')
+                ->get();
+
+            foreach ($recipients as $recipient) {
+                try {
+                    Mail::to($recipient->email)->send(
+                        new \App\Mail\ProductUpdateMail($recipient, $product)
+                    );
+                } catch (\Exception $mailError) {
+                    \Illuminate\Support\Facades\Log::warning('Email produk baru gagal ke ' . $recipient->email . ': ' . $mailError->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Email notif produk baru error: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Produk berhasil ditambah!');
     });
     Route::get('/produk/edit/{id}', function($id) {
