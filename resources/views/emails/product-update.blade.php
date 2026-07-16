@@ -188,7 +188,7 @@
             <div class="product-card">
                 @if($product->gambar)
                 <img
-                    src="{{ asset($product->gambar) }}"
+                    src="{{ rtrim(config('app.url'), '/') . '/' . ltrim($product->gambar, '/') }}"
                     alt="{{ $product->nama_produk }}"
                     class="product-img"
                 >
