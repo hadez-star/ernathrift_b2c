@@ -49,6 +49,8 @@ foreach (\$vars as \$key => \$value) {
 }
 file_put_contents('.env', \$env);
 echo 'ENV vars written to .env' . PHP_EOL;
+echo 'MAIL_MAILER from env: ' . getenv('MAIL_MAILER') . PHP_EOL;
+echo 'MAIL_PASSWORD from env: ' . (getenv('MAIL_PASSWORD') ? 'SET' : 'NOT SET') . PHP_EOL;
 "
 
 # Generate key jika masih kosong
