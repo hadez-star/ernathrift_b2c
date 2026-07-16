@@ -1598,9 +1598,16 @@ Route::get('/wishlist', function () {
     $user = Auth::user();
     if (!$user) return redirect('/login');
     try {
-        $wishlists = Wishlist::with('product')->has('product')->where('user_id', $user->id)->latest()->get();
+        // withTrashed() untuk handle soft-deleted products, filter manual di view
+        $wishlists = Wishlist::with(['product' => function($q) {
+            $q->withTrashed();
+        }])->where('user_id', $user->id)->latest()->get()
+        ->filter(function($w) {
+            // Hanya tampilkan wishlist yang produknya masih ada dan tidak dihapus
+            return $w->product && !$w->product->trashed();
+        })->values();
     } catch (\Exception $e) {
-        \Illuminate\Support\Facades\Log::error('Wishlist error for user '.$user->id.': '.$e->getMessage());
+        \Illuminate\Support\Facades\Log::error('Wishlist error: ' . $e->getMessage());
         $wishlists = collect();
     }
     return view('wishlist', ['title' => 'Wishlist Saya', 'wishlists' => $wishlists]);

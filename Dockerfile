@@ -1,5 +1,5 @@
 FROM php:8.2.28-cli
-# cache-bust: 2026-07-17
+# cache-bust: 2026-07-17b
 ARG CACHE_BUST=1
 
 # Install system dependencies + PHP extension deps sekaligus

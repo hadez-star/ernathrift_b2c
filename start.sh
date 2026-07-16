@@ -24,6 +24,14 @@ php -r "
     'MIDTRANS_SNAP_URL'    => getenv('MIDTRANS_SNAP_URL'),
     'SESSION_DRIVER'       => getenv('SESSION_DRIVER'),
     'CACHE_STORE'          => getenv('CACHE_STORE'),
+    'MAIL_MAILER'          => getenv('MAIL_MAILER'),
+    'MAIL_HOST'            => getenv('MAIL_HOST'),
+    'MAIL_PORT'            => getenv('MAIL_PORT'),
+    'MAIL_USERNAME'        => getenv('MAIL_USERNAME'),
+    'MAIL_PASSWORD'        => getenv('MAIL_PASSWORD'),
+    'MAIL_ENCRYPTION'      => getenv('MAIL_ENCRYPTION'),
+    'MAIL_FROM_ADDRESS'    => getenv('MAIL_FROM_ADDRESS'),
+    'MAIL_FROM_NAME'       => getenv('MAIL_FROM_NAME'),
 ];
 foreach (\$vars as \$key => \$value) {
     if (\$value !== false && \$value !== '') {
@@ -61,6 +69,8 @@ fi
 
 # Clear config cache
 php artisan config:clear
+php artisan view:clear
+php artisan cache:clear
 
 # Cek koneksi DB
 echo "Mengecek koneksi database..."
