@@ -181,7 +181,11 @@
             <p class="intro-text">
                 Karena kamu pernah membeli dari kategori <strong style="color: #D4AF37;">{{ $product->kategori }}</strong>,
                 kami pikir kamu pasti suka dengan koleksi terbaru ini.
-                Produk thrift hanya ada 1 pcs — jangan sampai kehabisan!
+                @if($product->stok > 1)
+                    Stok tersisa {{ $product->stok }} pcs — jangan sampai kehabisan!
+                @else
+                    Produk thrift hanya ada 1 pcs — jangan sampai kehabisan!
+                @endif
             </p>
 
             <!-- Product Card -->
@@ -209,11 +213,18 @@
             </div>
 
             <!-- CTA Button -->
-            <a href="{{ url('/produk/detail/' . $product->id) }}" class="btn-cta">
-                Lihat &amp; Beli Sekarang
-            </a>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0 10px;">
+                <tr>
+                    <td align="center">
+                        <a href="{{ rtrim(config('app.url'), '/') }}/produk/detail/{{ $product->id }}"
+                           style="display: inline-block; padding: 16px 40px; background-color: #D4AF37; color: #111111; text-decoration: none; font-weight: 800; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; border-radius: 6px; mso-padding-alt: 0; text-align: center;">
+                            LIHAT &amp; BELI SEKARANG
+                        </a>
+                    </td>
+                </tr>
+            </table>
             <p class="urgency-note">
-                ⚠️ Produk thrift hanya tersedia 1 pcs. Segera pesan sebelum kehabisan!
+                ⚠️ Stok tersisa {{ $product->stok }} pcs. Segera pesan sebelum kehabisan!
             </p>
 
             <hr class="divider">
