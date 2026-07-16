@@ -102,4 +102,16 @@ php artisan migrate --force
 php artisan storage:link --force 2>/dev/null || true
 
 echo "=== Server starting on port 8000 ==="
+
+# HARD OVERRIDE: pastikan MAIL config selalu smtp (backup jika PHP env reader gagal)
+sed -i 's/^MAIL_MAILER=log/MAIL_MAILER=smtp/' /var/www/.env 2>/dev/null || true
+# Override APP_URL jika masih localhost
+if grep -q "APP_URL=http://localhost" /var/www/.env; then
+    APP_URL_ENV=$(printenv APP_URL 2>/dev/null || echo "")
+    if [ -n "$APP_URL_ENV" ] && [ "$APP_URL_ENV" != "http://localhost" ]; then
+        sed -i "s|APP_URL=http://localhost|APP_URL=${APP_URL_ENV}|" /var/www/.env
+    fi
+fi
+php artisan config:clear 2>/dev/null || true
+
 exec php artisan serve --host=0.0.0.0 --port=8000
