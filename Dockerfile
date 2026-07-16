@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.2.28-cli
 # cache-bust: 2026-07-16
 ARG CACHE_BUST=1
 
