@@ -71,10 +71,22 @@ if [ -z "$APP_KEY_VAL" ] || [ "$APP_KEY_VAL" = "base64:" ]; then
     php artisan key:generate --force
 fi
 
+# Recreate storage skeleton DULU sebelum artisan commands
+mkdir -p /var/www/storage/framework/cache/data
+mkdir -p /var/www/storage/framework/sessions
+mkdir -p /var/www/storage/framework/testing
+mkdir -p /var/www/storage/framework/views
+mkdir -p /var/www/storage/logs
+mkdir -p /var/www/storage/app/public/uploads
+mkdir -p /var/www/bootstrap/cache
+
+# Fix permissions
+chmod -R 775 storage bootstrap/cache public/uploads 2>/dev/null || true
+
 # Clear config cache
-php artisan config:clear
-php artisan view:clear
-php artisan cache:clear
+php artisan config:clear 2>/dev/null || true
+php artisan view:clear 2>/dev/null || true
+php artisan cache:clear 2>/dev/null || true
 
 # Cek koneksi DB
 echo "Mengecek koneksi database..."
@@ -86,17 +98,6 @@ php artisan migrate --force
 
 # Storage link
 php artisan storage:link --force 2>/dev/null || true
-
-# Recreate storage skeleton if mounted as an empty volume
-mkdir -p /var/www/storage/framework/cache/data
-mkdir -p /var/www/storage/framework/sessions
-mkdir -p /var/www/storage/framework/testing
-mkdir -p /var/www/storage/framework/views
-mkdir -p /var/www/storage/logs
-mkdir -p /var/www/storage/app/public/uploads
-
-# Fix permissions
-chmod -R 775 storage bootstrap/cache public/uploads 2>/dev/null || true
 
 echo "=== Server starting on port 8000 ==="
 exec php artisan serve --host=0.0.0.0 --port=8000
