@@ -18,8 +18,6 @@
             <p class="footer-tagline">{{ $deskripsi_toko }}</p>
             <div style="margin-top: 25px; display: flex; gap: 15px;">
                 <a href="https://wa.me/{{ $wa_toko }}" target="_blank" class="btn-social"><i class="fab fa-whatsapp"></i></a>
-                <a href="#" class="btn-social"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="btn-social"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
         <div class="footer-section">
