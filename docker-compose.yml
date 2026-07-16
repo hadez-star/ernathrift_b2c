@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        CACHE_BUST: "2026-07-16-v2"
     container_name: thrift-store
     restart: unless-stopped
     ports:
