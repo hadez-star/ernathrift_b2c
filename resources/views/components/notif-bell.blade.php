@@ -1,10 +1,15 @@
 @auth
 @php
-    // Ambil notifikasi belum dibaca milik user yang login
-    $unreadCount = \App\Models\Notification::where('user_id', Auth::id())
-                    ->where('is_read', false)->count();
-    $notifList   = \App\Models\Notification::where('user_id', Auth::id())
-                    ->latest()->take(8)->get();
+    // Wrap in try-catch to prevent 500 if notifications table doesn't exist yet
+    try {
+        $unreadCount = \App\Models\Notification::where('user_id', Auth::id())
+                        ->where('is_read', false)->count();
+        $notifList   = \App\Models\Notification::where('user_id', Auth::id())
+                        ->latest()->take(8)->get();
+    } catch (\Exception $e) {
+        $unreadCount = 0;
+        $notifList   = collect();
+    }
 @endphp
 
 {{-- ============================================================ --}}

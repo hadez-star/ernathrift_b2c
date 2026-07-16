@@ -1,7 +1,11 @@
 @props(['showSearch' => false, 'showBack' => false])
 
 @php
-    $setting = \App\Models\WebSetting::first();
+    try {
+        $setting = \App\Models\WebSetting::first();
+    } catch (\Exception $e) {
+        $setting = null;
+    }
     $nama_toko = $setting->nama_toko ?? 'ERNA THRIFTING';
     $cartCount = Auth::check() ? \App\Models\Cart::where('user_id', Auth::id())->sum('jumlah') : 0;
 @endphp
@@ -287,7 +291,7 @@
                 <a href="{{ url('/profile') }}" style="text-decoration: none; color: inherit; display: block;">
                     <div class="profile-mini">
                         <div class="profile-mini-img">
-                            <img src="{{ Auth::user()->avatar ? asset('storage/'.Auth::user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=D4AF37&color=fff' }}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                            <img src="{{ Auth::user()->foto ? asset('uploads/profile/'.Auth::user()->foto) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=D4AF37&color=fff' }}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                         </div>
                         <div class="profile-mini-info">
                             <h4>{{ Auth::user()->name }}</h4>

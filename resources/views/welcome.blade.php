@@ -11,7 +11,7 @@
     $isVoucherActive = $voucherPromo && \Carbon\Carbon::parse($voucherPromo->valid_until)->isFuture();
 
     // FLASH SALE LOGIC
-    $isFlashSaleActive = isset($flashSale) && $flashSale && \Carbon\Carbon::parse($flashSale->end_time)->isFuture();
+    $isFlashSaleActive = isset($flashSale) && $flashSale && \Carbon\Carbon::parse($flashSale->start_time)->isPast() && \Carbon\Carbon::parse($flashSale->end_time)->isFuture();
 @endphp
 
 <!DOCTYPE html>

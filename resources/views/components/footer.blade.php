@@ -1,5 +1,9 @@
 @php
-    $setting = \App\Models\WebSetting::first();
+    try {
+        $setting = \App\Models\WebSetting::first();
+    } catch (\Exception $e) {
+        $setting = null;
+    }
     $nama_toko = $setting->nama_toko ?? 'ERNA THRIFTING';
     $email_toko = $setting->email ?? 'hello@ernathrifting.com';
     $wa_toko = $setting->whatsapp ?? '6281234567890';

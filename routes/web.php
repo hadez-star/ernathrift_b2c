@@ -20,6 +20,7 @@ use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 /*
@@ -33,7 +34,7 @@ Route::get('/', function (Request $request) {
     }
 
     $flashSale = FlashSale::with('items.product')->first();
-    if ($flashSale && $flashSale->is_active && Carbon::parse($flashSale->end_time)->isFuture()) {
+    if ($flashSale && $flashSale->is_active && Carbon::parse($flashSale->start_time)->isPast() && Carbon::parse($flashSale->end_time)->isFuture()) {
         $flashSaleProducts = $flashSale->items()->take(4)->get();
     } else {
         $flashSaleProducts = collect();
@@ -98,7 +99,7 @@ Route::get('/flash-sale', function () {
     $flashSale = FlashSale::with('items.product')->first();
     $flashSaleEnd = $flashSale ? $flashSale->end_time : Carbon::now()->addHours(24)->toDateTimeString();
     
-    if ($flashSale && $flashSale->is_active && Carbon::parse($flashSale->end_time)->isFuture()) {
+    if ($flashSale && $flashSale->is_active && Carbon::parse($flashSale->start_time)->isPast() && Carbon::parse($flashSale->end_time)->isFuture()) {
         $products = $flashSale->items;
     } else {
         $products = collect();
@@ -937,12 +938,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         return response()->stream($callback, 200, $headers);
     })->name('admin.pendapatan.excel');
 
-    Route::get('/wishlist', function() {
-        if (!Auth::check()) return redirect('/login');
-        $wishlists = Wishlist::with('product')->where('user_id', Auth::id())->latest()->get();
-        return view('wishlist', ['wishlists' => $wishlists, 'title' => 'Wishlist Saya']);
-    });
-
     Route::get('/produk', function(Request $request) { 
         $query = Product::latest();
         $trashedCount = Product::onlyTrashed()->count();
@@ -1060,7 +1055,42 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             }
         }
 
-        return redirect('/admin/produk')->with('success', 'Data produk berhasil diperbarui!');
+        // =====================================================================
+        // NOTIFIKASI EMAIL OTOMATIS KE PELANGGAN BERDASARKAN RIWAYAT PEMBELIAN
+        // Kirim email ke user yang pernah membeli produk dari kategori yang sama
+        // dengan produk yang baru diupdate. Relevan & targeted, bukan blast semua.
+        // =====================================================================
+        $freshProduct = Product::find($product->id);
+        if ($freshProduct && $freshProduct->status === 'Tersedia') {
+            // Ambil user yang pernah membeli dari kategori yang sama
+            $interestedUserIds = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->join('products as p', 'order_items.product_id', '=', 'p.id')
+                ->where('p.kategori', $freshProduct->kategori)
+                ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
+                ->select('orders.user_id')
+                ->distinct()
+                ->pluck('user_id');
+
+            if ($interestedUserIds->count() > 0) {
+                $interestedUsers = User::whereIn('id', $interestedUserIds)
+                    ->whereNotNull('email')
+                    ->get();
+
+                foreach ($interestedUsers as $targetUser) {
+                    try {
+                        Mail::to($targetUser->email)->send(
+                            new \App\Mail\ProductUpdateMail($targetUser, $freshProduct)
+                        );
+                    } catch (\Exception $e) {
+                        // Gagal kirim email tidak boleh menghentikan proses update
+                        \Illuminate\Support\Facades\Log::warning('Gagal kirim ProductUpdateMail ke ' . $targetUser->email . ': ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+
+        return redirect('/admin/produk')->with('success', 'Data produk berhasil diperbarui dan notifikasi email dikirim!');
     });
     Route::get('/produk/hapus/{id}', function($id) {
         Product::destroy($id); return redirect()->back()->with('success', 'Produk berhasil dipindahkan ke tempat sampah.');
@@ -1098,6 +1128,18 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ]); 
     });
     Route::post('/flash-sale/simpan', function(Request $request) {
+        $request->validate([
+            'nama_kampanye' => 'required',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+        ], [
+            'end_time.after' => 'Waktu berakhir harus setelah waktu mulai.'
+        ]);
+
+        if (\Carbon\Carbon::parse($request->end_time)->isPast()) {
+            return redirect()->back()->with('error', 'Waktu berakhir tidak boleh di masa lalu.');
+        }
+
         $flashSale = FlashSale::first();
         if(!$flashSale) {
             FlashSale::create([
@@ -1351,25 +1393,102 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 Route::get('/produk/detail/{id}', function ($id) {
     $p = Product::with(['reviews.user', 'images', 'variants'])->findOrFail($id);
     
-    // Algoritma Produk Terkait: Kategori yang sama, acak, limit 4
-    $relatedProducts = Product::where('kategori', $p->kategori)
-        ->where('id', '!=', $p->id)
-        ->where('status', 'Tersedia')
-        ->inRandomOrder()
-        ->take(4)
-        ->get();
+    // =====================================================================
+    // ALGORITMA REKOMENDASI PRODUK PERSONAL
+    // =====================================================================
+    // Prioritas:
+    // 1. Produk yang sering dibeli bersamaan (collaborative: same-order co-purchase)
+    // 2. Produk dari kategori yang sering dibeli oleh user ini (purchase history)
+    // 3. Produk dari kategori yang sama (content-based)
+    // 4. Fallback: produk unggulan (featured)
+    // Hasilnya bersifat deterministik (tidak berubah saat refresh)
+    // =====================================================================
 
-    // Fallback: Jika produk terkait < 4, ambil dari produk unggulan (Featured)
-    if ($relatedProducts->count() < 4) {
-        $needed = 4 - $relatedProducts->count();
-        $featured = Product::where('is_featured', 1)
-            ->where('id', '!=', $p->id)
-            ->whereNotIn('id', $relatedProducts->pluck('id'))
+    $recommendedIds = collect();
+
+    // Langkah 1: Co-purchase — produk lain yang sering dibeli dalam order yang sama
+    // Cari order yang berisi produk ini, lalu ambil produk lain dari order tsb
+    $coPurchasedIds = DB::table('order_items as oi1')
+        ->join('order_items as oi2', 'oi1.order_id', '=', 'oi2.order_id')
+        ->join('orders', 'oi1.order_id', '=', 'orders.id')
+        ->where('oi1.product_id', $id)
+        ->where('oi2.product_id', '!=', $id)
+        ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
+        ->select('oi2.product_id', DB::raw('COUNT(*) as freq'))
+        ->groupBy('oi2.product_id')
+        ->orderByDesc('freq')
+        ->limit(4)
+        ->pluck('product_id');
+
+    if ($coPurchasedIds->count() > 0) {
+        $recommendedIds = $recommendedIds->merge($coPurchasedIds);
+    }
+
+    // Langkah 2: Jika user login, prioritaskan kategori yang sering ia beli
+    if (Auth::check() && $recommendedIds->count() < 4) {
+        // Ambil kategori yang sering dibeli user ini
+        $preferredCategories = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.user_id', Auth::id())
+            ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
+            ->where('products.kategori', '!=', $p->kategori)  // exclude kategori yg sedang dilihat agar variatif
+            ->select('products.kategori', DB::raw('COUNT(*) as freq'))
+            ->groupBy('products.kategori')
+            ->orderByDesc('freq')
+            ->limit(3)
+            ->pluck('kategori');
+
+        if ($preferredCategories->count() > 0) {
+            $needed = 4 - $recommendedIds->count();
+            $personalRecs = Product::whereIn('kategori', $preferredCategories)
+                ->where('id', '!=', $id)
+                ->whereNotIn('id', $recommendedIds)
+                ->where('status', 'Tersedia')
+                ->orderBy('id', 'desc')  // deterministik: produk terbaru dulu
+                ->take($needed)
+                ->pluck('id');
+            $recommendedIds = $recommendedIds->merge($personalRecs);
+        }
+    }
+
+    // Langkah 3: Isi sisa dengan produk kategori yang sama (content-based, deterministik)
+    if ($recommendedIds->count() < 4) {
+        $needed = 4 - $recommendedIds->count();
+        $sameCategory = Product::where('kategori', $p->kategori)
+            ->where('id', '!=', $id)
+            ->whereNotIn('id', $recommendedIds)
             ->where('status', 'Tersedia')
-            ->inRandomOrder()
+            ->orderBy('id', 'desc')  // deterministik: terbaru dulu
             ->take($needed)
-            ->get();
-        $relatedProducts = $relatedProducts->concat($featured);
+            ->pluck('id');
+        $recommendedIds = $recommendedIds->merge($sameCategory);
+    }
+
+    // Langkah 4: Fallback dengan produk featured (deterministik)
+    if ($recommendedIds->count() < 4) {
+        $needed = 4 - $recommendedIds->count();
+        $featuredFallback = Product::where('is_featured', 1)
+            ->where('id', '!=', $id)
+            ->whereNotIn('id', $recommendedIds)
+            ->where('status', 'Tersedia')
+            ->orderBy('id', 'desc')
+            ->take($needed)
+            ->pluck('id');
+        $recommendedIds = $recommendedIds->merge($featuredFallback);
+    }
+
+    // Ambil produk sesuai ID yang terkumpul, pertahankan urutan prioritas
+    $finalIds = $recommendedIds->unique()->take(4)->values();
+    $relatedProducts = collect();
+    if ($finalIds->count() > 0) {
+        $relatedProducts = Product::whereIn('id', $finalIds)
+            ->where('status', 'Tersedia')
+            ->get()
+            ->sortBy(function($prod) use ($finalIds) {
+                return $finalIds->search($prod->id);
+            })
+            ->values();
     }
 
     $flashSaleItem = null;
@@ -1412,7 +1531,12 @@ Route::post('/wishlist/tambah/{product_id}', function ($product_id) {
 Route::get('/wishlist', function () {
     $user = Auth::user();
     if (!$user) return redirect('/login');
-    $wishlists = Wishlist::with('product')->where('user_id', $user->id)->latest()->get();
+    try {
+        $wishlists = Wishlist::with('product')->has('product')->where('user_id', $user->id)->latest()->get();
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Wishlist error for user '.$user->id.': '.$e->getMessage());
+        $wishlists = collect();
+    }
     return view('wishlist', ['title' => 'Wishlist Saya', 'wishlists' => $wishlists]);
 })->name('wishlist');
 

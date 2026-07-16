@@ -55,8 +55,10 @@
             <h2 style="font-family:'Playfair Display', serif; font-size: 22px; margin: 0;">
                 <i class="fas fa-bolt" style="color:#F1C40F; margin-right:10px;"></i> Kampanye Aktif
             </h2>
-            @if($flashSale && $flashSale->is_active && \Carbon\Carbon::parse($flashSale->end_time)->isFuture())
+            @if($flashSale && $flashSale->is_active && \Carbon\Carbon::parse($flashSale->end_time)->isFuture() && \Carbon\Carbon::parse($flashSale->start_time)->isPast())
                 <span class="badge-status badge-active">AKTIF MENGUDARA</span>
+            @elseif($flashSale && $flashSale->is_active && \Carbon\Carbon::parse($flashSale->start_time)->isFuture())
+                <span class="badge-status badge-active" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">AKAN DATANG</span>
             @else
                 <span class="badge-status badge-inactive">TIDAK AKTIF</span>
             @endif

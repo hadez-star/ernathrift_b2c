@@ -1,5 +1,9 @@
 @php
-    $setting = \App\Models\WebSetting::first();
+    try {
+        $setting = \App\Models\WebSetting::first();
+    } catch (\Exception $e) {
+        $setting = null;
+    }
     $nama_toko = $setting->nama_toko ?? 'ERNA THRIFTING';
 @endphp
 
@@ -298,6 +302,7 @@
         <div class="wishlist-grid">
             @foreach($wishlists as $w)
             @php $p = $w->product; @endphp
+            @if($p)
             <div class="wishlist-card" id="wishlist-{{ $w->id }}">
                 <button class="remove-btn" onclick="removeFromWishlist({{ $p->id }}, {{ $w->id }})" title="Hapus dari Wishlist">
                     <i class="fas fa-times"></i>
@@ -317,6 +322,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
         @else

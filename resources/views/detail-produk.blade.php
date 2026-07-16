@@ -437,7 +437,21 @@
 
         @if(isset($relatedProducts) && $relatedProducts->count() > 0)
         <div class="reviews-section" style="margin-top: 40px; padding: 40px;">
-            <h2 class="reviews-title" style="font-size: 20px; border: none; margin-bottom: 30px;">Mungkin Anda Juga Suka...</h2>
+            <h2 class="reviews-title" style="font-size: 20px; border: none; margin-bottom: 8px;">
+                @auth
+                    Rekomendasi untuk Kamu
+                @else
+                    Mungkin Anda Juga Suka...
+                @endauth
+            </h2>
+            @auth
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 0.5px;">
+                <i class="fas fa-sparkles" style="color: var(--gold); margin-right: 6px;"></i>
+                Dipilih berdasarkan riwayat belanja & preferensi kamu
+            </p>
+            @else
+            <div style="margin-bottom: 30px;"></div>
+            @endauth
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;">
                 @foreach($relatedProducts as $rp)
                 <a href="{{ url('/produk/detail/'.$rp->id) }}" class="related-card" style="text-decoration: none; color: inherit; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: block; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;">
