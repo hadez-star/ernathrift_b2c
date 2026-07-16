@@ -419,7 +419,7 @@ Route::post('/checkout/proses', function (Request $request) {
     }
 
     $order = Order::create([
-        'user_id' => $user->id, 'invoice' => 'INV/' . date('Ymd') . '/' . rand(100, 999),
+        'user_id' => $user->id, 'invoice' => 'INV-' . date('Ymd') . '-' . rand(100, 999),
         'total_harga' => $totalHarga, 'diskon' => $diskonVip + $potonganVoucher, 
         'ongkir' => $ongkir, 'total_bayar' => $totalBayar,
         'alamat_pengiriman' => $user->alamat . ' No.' . $user->no_rumah, 
@@ -563,7 +563,7 @@ Route::post('/checkout/midtrans-token', function (Request $request) {
     }
 
     // Buat order dulu dengan status Menunggu Pembayaran
-    $invoice = 'INV/' . date('Ymd') . '/' . rand(100, 999);
+    $invoice = 'INV-' . date('Ymd') . '-' . rand(100, 999);
     $order = Order::create([
         'user_id'            => $user->id,
         'invoice'            => $invoice,
