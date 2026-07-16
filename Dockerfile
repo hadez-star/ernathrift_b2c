@@ -1,4 +1,5 @@
 FROM php:8.2-cli
+# cache-bust: 2026-07-16
 
 # Install system dependencies + PHP extension deps sekaligus
 RUN apt-get update && apt-get install -y \
