@@ -1094,37 +1094,53 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         }
 
         // =====================================================================
-        // NOTIFIKASI EMAIL OTOMATIS KE PELANGGAN BERDASARKAN RIWAYAT PEMBELIAN
-        // Kirim email ke user yang pernah membeli produk dari kategori yang sama
-        // dengan produk yang baru diupdate. Relevan & targeted, bukan blast semua.
+        // NOTIFIKASI EMAIL: kirim ke user yang pernah beli ATAU wishlist
+        // dari kategori yang sama dengan produk yang diupdate
         // =====================================================================
         $freshProduct = Product::find($product->id);
         if ($freshProduct && $freshProduct->status === 'Tersedia') {
-            // Ambil user yang pernah membeli dari kategori yang sama
-            $interestedUserIds = DB::table('order_items')
-                ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->join('products as p', 'order_items.product_id', '=', 'p.id')
-                ->where('p.kategori', $freshProduct->kategori)
-                ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
-                ->select('orders.user_id')
-                ->distinct()
-                ->pluck('user_id');
+            try {
+                $recipientIds = collect();
 
-            if ($interestedUserIds->count() > 0) {
-                $interestedUsers = User::whereIn('id', $interestedUserIds)
+                // 1. User yang pernah beli dari kategori ini
+                $buyerIds = DB::table('order_items')
+                    ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                    ->join('products as p', 'order_items.product_id', '=', 'p.id')
+                    ->where('p.kategori', $freshProduct->kategori)
+                    ->whereIn('orders.status', ['Selesai', 'Dikirim', 'Dikemas'])
+                    ->pluck('orders.user_id');
+                $recipientIds = $recipientIds->merge($buyerIds);
+
+                // 2. User yang punya wishlist dari kategori ini
+                $wishlistIds = DB::table('wishlists')
+                    ->join('products as p', 'wishlists.product_id', '=', 'p.id')
+                    ->where('p.kategori', $freshProduct->kategori)
+                    ->pluck('wishlists.user_id');
+                $recipientIds = $recipientIds->merge($wishlistIds);
+
+                // 3. Fallback: kalau tidak ada sama sekali, kirim ke semua user
+                if ($recipientIds->isEmpty()) {
+                    $recipientIds = User::where('role', 'user')
+                        ->whereNotNull('email')
+                        ->pluck('id');
+                }
+
+                $recipients = User::whereIn('id', $recipientIds->unique())
+                    ->where('role', 'user')
                     ->whereNotNull('email')
                     ->get();
 
-                foreach ($interestedUsers as $targetUser) {
+                foreach ($recipients as $targetUser) {
                     try {
                         Mail::to($targetUser->email)->send(
                             new \App\Mail\ProductUpdateMail($targetUser, $freshProduct)
                         );
                     } catch (\Exception $e) {
-                        // Gagal kirim email tidak boleh menghentikan proses update
                         \Illuminate\Support\Facades\Log::warning('Gagal kirim ProductUpdateMail ke ' . $targetUser->email . ': ' . $e->getMessage());
                     }
                 }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Email notif update produk error: ' . $e->getMessage());
             }
         }
 
