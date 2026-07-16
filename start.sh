@@ -36,10 +36,14 @@ php -r "
 foreach (\$vars as \$key => \$value) {
     if (\$value !== false && \$value !== '') {
         \$pattern = '/^' . preg_quote(\$key, '/') . '=.*/m';
+        // Wrap value in quotes if it contains spaces or special chars
+        \$safeValue = (strpos(\$value, ' ') !== false || strpos(\$value, '#') !== false)
+            ? '\"' . addslashes(\$value) . '\"'
+            : \$value;
         if (preg_match(\$pattern, \$env)) {
-            \$env = preg_replace(\$pattern, \$key . '=' . \$value, \$env);
+            \$env = preg_replace(\$pattern, \$key . '=' . \$safeValue, \$env);
         } else {
-            \$env .= PHP_EOL . \$key . '=' . \$value;
+            \$env .= PHP_EOL . \$key . '=' . \$safeValue;
         }
     }
 }
