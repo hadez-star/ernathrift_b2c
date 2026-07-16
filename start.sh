@@ -103,15 +103,26 @@ php artisan storage:link --force 2>/dev/null || true
 
 echo "=== Server starting on port 8000 ==="
 
-# HARD OVERRIDE: pastikan MAIL config selalu smtp (backup jika PHP env reader gagal)
-sed -i 's/^MAIL_MAILER=log/MAIL_MAILER=smtp/' /var/www/.env 2>/dev/null || true
-# Override APP_URL jika masih localhost
-if grep -q "APP_URL=http://localhost" /var/www/.env; then
-    APP_URL_ENV=$(printenv APP_URL 2>/dev/null || echo "")
-    if [ -n "$APP_URL_ENV" ] && [ "$APP_URL_ENV" != "http://localhost" ]; then
-        sed -i "s|APP_URL=http://localhost|APP_URL=${APP_URL_ENV}|" /var/www/.env
-    fi
-fi
+# PERMANENT MAIL FIX: override setiap startup, tidak perlu manual fix lagi
+sed -i 's|^MAIL_MAILER=.*|MAIL_MAILER=smtp|' /var/www/.env 2>/dev/null || true
+sed -i 's|^MAIL_HOST=.*|MAIL_HOST=smtp.gmail.com|' /var/www/.env 2>/dev/null || true
+sed -i 's|^MAIL_PORT=.*|MAIL_PORT=587|' /var/www/.env 2>/dev/null || true
+sed -i 's|^MAIL_ENCRYPTION=.*|MAIL_ENCRYPTION=tls|' /var/www/.env 2>/dev/null || true
+
+# Inject nilai dari Coolify env vars menggunakan printenv (lebih reliable dari getenv PHP)
+_MAIL_USER=$(printenv MAIL_USERNAME 2>/dev/null || echo "")
+_MAIL_PASS=$(printenv MAIL_PASSWORD 2>/dev/null || echo "")
+_MAIL_FROM=$(printenv MAIL_FROM_ADDRESS 2>/dev/null || echo "")
+_MAIL_NAME=$(printenv MAIL_FROM_NAME 2>/dev/null || echo "ERNA Thrifting")
+_APP_URL=$(printenv APP_URL 2>/dev/null || echo "")
+
+[ -n "$_MAIL_USER" ] && sed -i "s|^MAIL_USERNAME=.*|MAIL_USERNAME=${_MAIL_USER}|" /var/www/.env
+[ -n "$_MAIL_PASS" ] && sed -i "s|^MAIL_PASSWORD=.*|MAIL_PASSWORD=\"${_MAIL_PASS}\"|" /var/www/.env
+[ -n "$_MAIL_FROM" ] && sed -i "s|^MAIL_FROM_ADDRESS=.*|MAIL_FROM_ADDRESS=\"${_MAIL_FROM}\"|" /var/www/.env
+sed -i "s|^MAIL_FROM_NAME=.*|MAIL_FROM_NAME=\"${_MAIL_NAME}\"|" /var/www/.env
+[ -n "$_APP_URL" ] && sed -i "s|^APP_URL=.*|APP_URL=${_APP_URL}|" /var/www/.env
+
 php artisan config:clear 2>/dev/null || true
+echo "Mail & URL config applied permanently."
 
 exec php artisan serve --host=0.0.0.0 --port=8000
