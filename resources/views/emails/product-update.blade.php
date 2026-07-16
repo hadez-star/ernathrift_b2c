@@ -227,11 +227,12 @@
                 ⚠️ Stok tersisa {{ $product->stok }} pcs. Segera pesan sebelum kehabisan!
             </p>
 
-            <hr class="divider">
-            <p class="why-note">
-                Kamu menerima email ini karena kamu pernah berbelanja di kategori <strong>{{ $product->kategori }}</strong>
+            <p style="font-size: 11px; color: #555; text-align: center; line-height: 1.6; font-style: italic; margin-top: 15px;">
+                Kamu menerima email ini karena kamu pernah berbelanja di kategori <strong style="color: #888;">{{ $product->kategori }}</strong>
                 di ERNA THRIFTING. Kami hanya mengirimkan rekomendasi yang relevan dengan riwayat belanjamu.
             </p>
+
+            <hr class="divider">
         </div>
 
         <!-- Footer -->
