@@ -78,7 +78,7 @@
                 </div>
                 @if($voucher->valid_until)
                 <div class="voucher-expiry">
-                    ⏰ Berlaku hingga: {{ \Carbon\Carbon::parse($voucher->valid_until)->format('d M Y') }}
+                    ⏰ Berlaku hingga: {{ \Carbon\Carbon::parse($voucher->valid_until)->format('d M Y, H:i') }} WIB
                 </div>
                 @endif
             </div>

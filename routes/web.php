@@ -1231,24 +1231,29 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/flash-sale/tambah-produk', function(Request $request) {
         $fs = FlashSale::first();
         if(!$fs) return redirect()->back()->with('error', 'Buat kampanye Flash Sale terlebih dahulu.');
-        $fsItem = FlashSaleItem::create([
+        FlashSaleItem::create([
             'flash_sale_id' => $fs->id,
             'product_id' => $request->product_id,
             'harga_diskon' => $request->harga_diskon,
             'kuota_stok' => $request->kuota_stok
         ]);
 
-        // Kirim email notifikasi Flash Sale ke semua user
+        // Kirim email dengan SEMUA produk flash sale (bukan hanya yang baru ditambah)
         try {
-            $fsItem->load('product');
+            $allItems = FlashSaleItem::with('product')
+                ->where('flash_sale_id', $fs->id)
+                ->get()
+                ->filter(fn($i) => $i->product !== null);
+
             $allUsers = User::where('role', 'user')->whereNotNull('email')->get();
             foreach ($allUsers as $recipient) {
                 try {
-                    Mail::to($recipient->email)->send(new \App\Mail\FlashSaleMail($recipient, $fs, $fsItem));
+                    Mail::to($recipient->email)->send(new \App\Mail\FlashSaleMail($recipient, $fs, $allItems));
                 } catch (\Exception $e) {
                     \Illuminate\Support\Facades\Log::warning('FlashSaleMail gagal ke ' . $recipient->email . ': ' . $e->getMessage());
                 }
             }
+            \Illuminate\Support\Facades\Log::info('FlashSaleMail: kirim ke ' . $allUsers->count() . ' user, ' . $allItems->count() . ' produk');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::warning('FlashSaleMail error: ' . $e->getMessage());
         }

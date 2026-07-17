@@ -3,13 +3,13 @@
 namespace App\Mail;
 
 use App\Models\FlashSale;
-use App\Models\FlashSaleItem;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class FlashSaleMail extends Mailable
 {
@@ -17,19 +17,19 @@ class FlashSaleMail extends Mailable
 
     public $user;
     public $flashSale;
-    public $flashSaleItem;
+    public $flashSaleItems;
 
-    public function __construct(User $user, FlashSale $flashSale, FlashSaleItem $flashSaleItem)
+    public function __construct(User $user, FlashSale $flashSale, Collection $flashSaleItems)
     {
         $this->user = $user;
         $this->flashSale = $flashSale;
-        $this->flashSaleItem = $flashSaleItem;
+        $this->flashSaleItems = $flashSaleItems;
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '⚡ Flash Sale: ' . ($this->flashSaleItem->product->nama_produk ?? 'Produk Baru') . ' — ERNA THRIFTING',
+            subject: '⚡ Flash Sale: ' . $this->flashSale->nama_kampanye . ' — ERNA THRIFTING',
         );
     }
 
