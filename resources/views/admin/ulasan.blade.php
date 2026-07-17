@@ -60,9 +60,9 @@
     <div class="review-card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div class="user-info">
-                <div class="user-avatar">{{ strtoupper(substr($r->user->name, 0, 1)) }}</div>
+                <div class="user-avatar">{{ strtoupper(substr($r->user->name ?? 'U', 0, 1)) }}</div>
                 <div>
-                    <div class="user-name">{{ $r->user->name }}</div>
+                    <div class="user-name">{{ $r->user->name ?? 'User Dihapus' }}</div>
                     <div class="review-date">{{ $r->created_at->format('d M Y, H:i') }} | Invoice: #{{ $r->invoice }}</div>
                 </div>
             </div>
