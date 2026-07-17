@@ -1231,13 +1231,29 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/flash-sale/tambah-produk', function(Request $request) {
         $fs = FlashSale::first();
         if(!$fs) return redirect()->back()->with('error', 'Buat kampanye Flash Sale terlebih dahulu.');
-        FlashSaleItem::create([
+        $fsItem = FlashSaleItem::create([
             'flash_sale_id' => $fs->id,
             'product_id' => $request->product_id,
             'harga_diskon' => $request->harga_diskon,
             'kuota_stok' => $request->kuota_stok
         ]);
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke Flash Sale!');
+
+        // Kirim email notifikasi Flash Sale ke semua user
+        try {
+            $fsItem->load('product');
+            $allUsers = User::where('role', 'user')->whereNotNull('email')->get();
+            foreach ($allUsers as $recipient) {
+                try {
+                    Mail::to($recipient->email)->send(new \App\Mail\FlashSaleMail($recipient, $fs, $fsItem));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning('FlashSaleMail gagal ke ' . $recipient->email . ': ' . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('FlashSaleMail error: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke Flash Sale dan notifikasi email dikirim!');
     });
     Route::get('/flash-sale/hapus-produk/{id}', function($id) {
         FlashSaleItem::destroy($id);
@@ -1258,7 +1274,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         return view('admin.voucher', ['vouchers' => Voucher::latest()->get()]); 
     });
     Route::post('/voucher/simpan', function(Request $request) {
-        Voucher::create([
+        $voucher = Voucher::create([
             'code' => strtoupper($request->code),
             'type' => $request->type ?? 'fixed',
             'reward_amount' => $request->reward_amount,
@@ -1267,7 +1283,22 @@ Route::prefix('admin')->middleware('admin')->group(function () {
             'expiry_date' => $request->expiry_date ?? 'Semua Pengguna',
             'valid_until' => $request->valid_until ?? Carbon::now()->addDays(30)
         ]);
-        return redirect()->back()->with('success', 'Voucher berhasil diterbitkan!');
+
+        // Kirim email voucher ke semua user
+        try {
+            $allUsers = User::where('role', 'user')->whereNotNull('email')->get();
+            foreach ($allUsers as $recipient) {
+                try {
+                    Mail::to($recipient->email)->send(new \App\Mail\VoucherMail($recipient, $voucher));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning('VoucherMail gagal ke ' . $recipient->email . ': ' . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('VoucherMail error: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Voucher berhasil diterbitkan dan notifikasi email dikirim!');
     });
     Route::get('/voucher/hapus/{id}', function($id) {
         Voucher::destroy($id); return redirect()->back()->with('success', 'Voucher telah dihapus.');
