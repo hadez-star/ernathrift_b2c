@@ -781,7 +781,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         $orderSelesaiCount = (clone $queryOrderSelesai)->count();
         $aov = $orderSelesaiCount > 0 ? $totalPendapatan / $orderSelesaiCount : 0;
 
-        $pesananAktif = Order::whereIn('status', ['Dikemas', 'Dikirim', 'Menunggu Pembayaran', 'Tertunda'])->count();
+        $pesananAktif = Order::whereIn('status', ['Dikemas', 'Dikirim', 'Menunggu Pembayaran'])->count();
         $totalProduk = Product::count();
         $totalWishlist = Wishlist::count();
         $orders = Order::with('user')->latest()->take(5)->get();
@@ -861,7 +861,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         $lowStockVariants = \App\Models\ProductVariant::with('product')->where('stok', '<', 5)->get();
 
         $notifications = collect();
-        $newOrders = Order::whereIn('status', ['Menunggu Pembayaran', 'Tertunda'])->latest()->take(3)->get();
+        $newOrders = Order::whereIn('status', ['Menunggu Pembayaran'])->latest()->take(3)->get();
         foreach($newOrders as $no) {
             $notifications->push(['type' => 'order', 'title' => 'Pesanan Baru', 'desc' => "Invoice {$no->invoice} menunggu konfirmasi.", 'time' => $no->created_at, 'icon' => 'fa-shopping-cart', 'color' => '#007BFF', 'url' => url('/admin/pesanan?search=' . $no->invoice)]);
         }
@@ -1668,29 +1668,6 @@ Route::middleware(['auth'])->group(function () {
         \App\Models\Notification::where('user_id', Auth::id())->update(['is_read' => true]);
         return response()->json(['success' => true]);
     });
-
-    Route::post('/pesanan/upload-bukti/{id}', function (Illuminate\Http\Request $request, $id) {
-    $request->validate([
-        'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
-
-    $order = Order::where('user_id', Auth::id())->findOrFail($id);
-    
-    if ($request->hasFile('bukti_pembayaran')) {
-        $file = $request->file('bukti_pembayaran');
-        $filename = 'bukti_' . $order->invoice . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('uploads/bukti'), $filename);
-        
-        $order->update([
-            'bukti_pembayaran' => 'uploads/bukti/' . $filename,
-            'status' => 'Tertunda' // Berubah dari Menunggu Pembayaran -> Tertunda (Siap Verifikasi Admin)
-        ]);
-
-        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah. Admin akan segera memverifikasi pesanan Anda.');
-    }
-
-    return redirect()->back()->with('error', 'Gagal mengunggah bukti pembayaran.');
-});
 
 Route::get('/api/notifications/unread-count', function () {
         $count = \App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
