@@ -174,7 +174,7 @@
                                     <a href="{{ url('/admin/produk/restore/'.$p->id) }}" class="btn-restore">
                                         <i class="fas fa-undo"></i> Pulihkan
                                     </a>
-                                    <a href="{{ url('/admin/produk/hapus-permanen/'.$p->id) }}" class="btn-delete" onclick="return confirm('Hapus permanen produk ini? Data tidak bisa dikembalikan!')">
+                                    <a href="{{ url('/admin/produk/hapus-permanen/'.$p->id) }}" class="btn-delete" onclick="confirmHapusPermanen(event, this, '{{ addslashes($p->nama_produk) }}')">
                                         <i class="fas fa-times-circle"></i> Hapus Permanen
                                     </a>
                                 @else
@@ -200,6 +200,7 @@
     </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.getElementById('btn-add-variant').addEventListener('click', function() {
         const container = document.getElementById('variant-container');
@@ -213,5 +214,46 @@
         `;
         container.appendChild(row);
     });
+
+    // Konfirmasi hapus ke tempat sampah
+    function confirmDelete(e, namaProduk) {
+        e.preventDefault();
+        const url = e.currentTarget.href;
+        Swal.fire({
+            title: 'Hapus Produk?',
+            html: `Produk <strong>${namaProduk}</strong> akan dipindahkan ke tempat sampah.<br>Anda bisa memulihkannya kembali.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#D9534F',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-trash-alt"></i> Ya, Hapus',
+            cancelButtonText: 'Batal',
+            borderRadius: '12px',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
+
+    // Konfirmasi hapus permanen
+    function confirmHapusPermanen(e, el, namaProduk) {
+        e.preventDefault();
+        const url = el.href;
+        Swal.fire({
+            title: 'Hapus Permanen?',
+            html: `Produk <strong>${namaProduk}</strong> akan dihapus secara permanen.<br><span style="color:#D9534F;font-weight:600;">Data tidak bisa dikembalikan!</span>`,
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#D9534F',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-times-circle"></i> Ya, Hapus Permanen',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
 </script>
 @endsection
