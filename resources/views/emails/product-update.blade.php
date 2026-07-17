@@ -226,19 +226,18 @@
             <p class="urgency-note">
                 ⚠️ Stok tersisa {{ $product->stok }} pcs. Segera pesan sebelum kehabisan!
             </p>
-
-            <p style="font-size: 11px; color: #888; text-align: center; line-height: 1.6; font-style: italic; margin-top: 20px;">
-                Kamu menerima email ini karena kamu pernah berbelanja di kategori <strong style="color: #aaa;">{{ $product->kategori }}</strong>
-                di ERNA THRIFTING. Kami hanya mengirimkan rekomendasi yang relevan dengan riwayat belanjamu.
-            </p>
         </div>
 
         <!-- Footer -->
         <div class="footer">
+            <p style="font-size: 11px; color: #666; line-height: 1.6; font-style: italic; margin: 0 0 15px 0;">
+                Kamu menerima email ini karena kamu pernah berbelanja di kategori <strong style="color: #888;">{{ $product->kategori }}</strong>
+                di ERNA THRIFTING. Kami hanya mengirimkan rekomendasi yang relevan dengan riwayat belanjamu.
+            </p>
             &copy; 2026 ERNA THRIFTING. All rights reserved.<br>
             Pontianak, Indonesia &nbsp;|&nbsp;
-            <a href="{{ url('/') }}">Kunjungi Toko</a> &nbsp;|&nbsp;
-            <a href="{{ url('/riwayat-pesanan') }}">Riwayat Pesanan</a>
+            <a href="{{ rtrim(config('app.url'), '/') }}">Kunjungi Toko</a> &nbsp;|&nbsp;
+            <a href="{{ rtrim(config('app.url'), '/') }}/riwayat-pesanan">Riwayat Pesanan</a>
         </div>
     </div>
 </body>
