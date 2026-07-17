@@ -137,7 +137,7 @@
                             {{ $item->product->nama_produk ?? 'Produk Dihapus' }}
                         </div>
                     </td>
-                    <td style="color: var(--text-muted); text-decoration: line-through; font-size:11px;">Rp {{ number_format($item->product->harga, 0, ',', '.') }}</td>
+                    <td style="color: var(--text-muted); text-decoration: line-through; font-size:11px;">Rp {{ number_format($item->product->harga ?? 0, 0, ',', '.') }}</td>
                     <td style="color: #E84C3D; font-weight: 700;">Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}</td>
                     <td><span style="background: var(--bg-body); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight:600;">{{ $item->kuota_stok }}</span></td>
                     <td>
