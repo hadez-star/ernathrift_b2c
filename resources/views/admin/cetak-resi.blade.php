@@ -48,7 +48,7 @@
             <div class="address-col">
                 <h4>Penerima:</h4>
                 <div class="address-text">
-                    <strong>{{ $order->user->name }}</strong><br>
+                    <strong>{{ $order->user->name ?? 'User Dihapus' }}</strong><br>
                     {{ $order->user->no_hp ?? '-' }}<br>
                     {{ $order->alamat_pengiriman }}
                 </div>

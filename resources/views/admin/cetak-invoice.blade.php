@@ -59,8 +59,8 @@
                             </td>
                             <td>
                                 <strong>Ditagihkan kepada:</strong><br>
-                                {{ $order->user->name }}<br>
-                                {{ $order->user->email }}<br>
+                                {{ $order->user->name ?? 'User Dihapus' }}<br>
+                                {{ $order->user->email ?? '-' }}<br>
                                 {{ $order->alamat_pengiriman }}
                             </td>
                         </tr>

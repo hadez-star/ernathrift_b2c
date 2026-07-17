@@ -133,15 +133,15 @@
                 <tr>
                     <td style="font-weight: 600;">
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <img src="{{ asset($item->product->gambar) }}" style="width:30px; height:30px; object-fit:cover; border-radius:5px;">
-                            {{ $item->product->nama_produk }}
+                            <img src="{{ asset($item->product->gambar ?? '') }}" style="width:30px; height:30px; object-fit:cover; border-radius:5px;">
+                            {{ $item->product->nama_produk ?? 'Produk Dihapus' }}
                         </div>
                     </td>
                     <td style="color: var(--text-muted); text-decoration: line-through; font-size:11px;">Rp {{ number_format($item->product->harga, 0, ',', '.') }}</td>
                     <td style="color: #E84C3D; font-weight: 700;">Rp {{ number_format($item->harga_diskon, 0, ',', '.') }}</td>
                     <td><span style="background: var(--bg-body); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight:600;">{{ $item->kuota_stok }}</span></td>
                     <td>
-                        <a href="{{ url('/admin/flash-sale/hapus-produk/' . $item->id) }}" class="btn-hapus" onclick="confirmDelete(event, '{{ $item->product->nama_produk }}')"><i class="fas fa-trash"></i></a>
+                        <a href="{{ url('/admin/flash-sale/hapus-produk/' . $item->id) }}" class="btn-hapus" onclick="confirmDelete(event, '{{ addslashes($item->product->nama_produk ?? 'Produk') }}')"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
                 @empty
