@@ -97,18 +97,24 @@ Route::get('/katalog/{kategori?}', function (Request $request, $kategori = null)
 
 Route::get('/flash-sale', function () {
     $flashSale = FlashSale::with('items.product')->first();
-    $flashSaleEnd = $flashSale ? $flashSale->end_time : Carbon::now()->addHours(24)->toDateTimeString();
-    
-    if ($flashSale && $flashSale->is_active && Carbon::parse($flashSale->start_time)->isPast() && Carbon::parse($flashSale->end_time)->isFuture()) {
-        $products = $flashSale->items;
-    } else {
-        $products = collect();
-    }
-    
+
+    $isActive = $flashSale
+        && $flashSale->is_active
+        && Carbon::parse($flashSale->start_time)->isPast()
+        && Carbon::parse($flashSale->end_time)->isFuture();
+
+    // Countdown hanya ditampilkan kalau flash sale benar-benar aktif
+    $flashSaleEnd = $isActive
+        ? $flashSale->end_time
+        : Carbon::now()->toDateTimeString(); // set ke sekarang supaya countdown = 0
+
+    $products = $isActive ? $flashSale->items : collect();
+
     return view('flash-sale', [
-        'flashSaleEnd' => $flashSaleEnd, 
-        'products' => $products, 
-        'title' => $flashSale->nama_kampanye ?? 'Flash Sale'
+        'flashSaleEnd' => $flashSaleEnd,
+        'isActive'     => $isActive,
+        'products'     => $products,
+        'title'        => $flashSale->nama_kampanye ?? 'Flash Sale'
     ]);
 });
 

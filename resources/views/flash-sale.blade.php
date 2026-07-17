@@ -208,16 +208,27 @@
         <h1 class="fs-title">{{ $title ?? 'Midnight Flash Sale' }}</h1>
         <p class="fs-desc">Waktu Terbatas! Amankan koleksi eksklusif dengan penawaran spesial malam ini.</p>
         
+        @if(isset($isActive) && $isActive)
         <div class="countdown-timer" id="fs-timer" style="display: none;">
             <div class="time-box"><span class="time-number" id="fs-days">00</span><span class="time-label">Hari</span></div>
             <div class="time-box"><span class="time-number" id="fs-hours">00</span><span class="time-label">Jam</span></div>
             <div class="time-box"><span class="time-number" id="fs-mins">00</span><span class="time-label">Menit</span></div>
             <div class="time-box"><span class="time-number" id="fs-secs">00</span><span class="time-label">Detik</span></div>
         </div>
+        @endif
     </header>
 
     <div class="container">
-        @if(isset($products) && $products->count() > 0)
+        @if(!isset($isActive) || !$isActive)
+        <div style="text-align: center; padding: 80px 20px;">
+            <i class="fas fa-bolt" style="font-size: 60px; color: var(--border-color); margin-bottom: 20px; display: block;"></i>
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: var(--text-main); margin-bottom: 15px;">Tidak Ada Flash Sale Saat Ini</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">Pantau terus halaman ini untuk penawaran spesial berikutnya.</p>
+            <a href="{{ url('/katalog/semua') }}" style="display: inline-block; padding: 14px 30px; background: var(--gold); color: #111; text-decoration: none; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px;">
+                Lihat Katalog Produk
+            </a>
+        </div>
+        @elseif(isset($products) && $products->count() > 0)
             <div class="product-grid">
                 @foreach($products as $item)
                 @php $p = $item->product; @endphp
@@ -281,7 +292,7 @@
         }
 
         // Fitur Countdown Timer Flash Sale
-        @if(isset($flashSaleEnd))
+        @if(isset($flashSaleEnd) && isset($isActive) && $isActive)
             let fsEndTime = new Date("{{ $flashSaleEnd }}").getTime();
             let timerElement = document.getElementById('fs-timer');
             
