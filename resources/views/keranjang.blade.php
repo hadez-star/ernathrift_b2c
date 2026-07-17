@@ -173,7 +173,7 @@
             $totalBarang = 0;
             if(isset($carts) && $carts->count() > 0) {
                 foreach($carts as $cart) {
-                    $totalHarga += ($cart->product->harga * $cart->jumlah); 
+                    $totalHarga += (($cart->product->harga ?? 0) * $cart->jumlah); 
                     $totalBarang += $cart->jumlah;
                 }
             }

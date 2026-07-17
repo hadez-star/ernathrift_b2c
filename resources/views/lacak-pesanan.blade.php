@@ -323,7 +323,6 @@
                 $status = $order->status;
                 $steps = [
                     'Menunggu Pembayaran' => 0,
-                    'Tertunda' => 0,
                     'Dikemas' => 1,
                     'Dikirim' => 2,
                     'Selesai' => 3

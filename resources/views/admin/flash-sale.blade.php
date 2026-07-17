@@ -178,6 +178,25 @@
     @endif
 
     <script>
+        function confirmDelete(event, namaProduk) {
+            event.preventDefault();
+            const url = event.currentTarget.href;
+            Swal.fire({
+                title: 'Hapus dari Flash Sale?',
+                html: `Produk <strong>${namaProduk}</strong> akan dihapus dari Flash Sale.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#D9534F',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash"></i> Ya, Hapus',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+
         function confirmReset(event) {
             event.preventDefault();
             Swal.fire({

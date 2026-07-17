@@ -6,7 +6,7 @@
     // Kalkulasi Total
     $totalHarga = 0;
     foreach ($carts as $cart) {
-        $totalHarga += ($cart->product->harga * $cart->jumlah);
+        $totalHarga += (($cart->product->harga ?? 0) * $cart->jumlah);
     }
 
     $diskonVip = ($user->vip_paket == 'GOLD') ? $totalHarga * 0.05 : 0;
